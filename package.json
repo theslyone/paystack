@@ -4,7 +4,7 @@
   "description": "Paystack API wrapper",
   "main": "index.js",
   "scripts": {
-    "test": "KEY=sk_test_48c61309e7ddc20199404333fdf141faaf955533 ./node_modules/.bin/mocha ./test/*.js --reporter spec --timeout 20000"
+    "test": "./node_modules/.bin/mocha ./test/*.js --reporter spec --timeout 20000"
   },
   "keywords": [
     "payment",
