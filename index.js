@@ -18,8 +18,21 @@ var resources = {
   page: require('./resources/page'),
   subscription: require('./resources/subscription'),
   subaccount: require('./resources/subaccount'),
+  recipient: require('./resources/recipient'),
+  card: require('./resources/card'),
+  charge: require('./resources/charge'),
+  transfer: require('./resources/transfer'),
   settlements: require('./resources/settlements'),
   misc: require('./resources/misc')
+}
+
+function has(obj, key) {
+  return key.split(".").every(function(x) {
+    if(typeof obj != "object" || obj === null || ! x in obj)
+      return false;
+    obj = obj[x];
+    return true;
+  });
 }
 
 function Paystack(key) {
@@ -60,6 +73,7 @@ Paystack.prototype = {
 
         // Pull body passed
         var body = args.length === 2 ? args[1] : args[0];
+
         paramList.filter(function(item, index, array) {
           if(item.indexOf("*") === -1) {
             // Not required
@@ -67,7 +81,8 @@ Paystack.prototype = {
           }
           item = item.replace("*", "");
 
-          if(!(item in body)) {
+          //if(!(item in body)) {
+          if(!has(body, item)){
             throw new Error("Required Parameters Ommited - " + item);
           }
           return;
@@ -78,6 +93,7 @@ Paystack.prototype = {
       // Get arguments in endpoint e.g {id} in customer/{id} and pull
       // out from array
       var argsInEndpoint = endpoint.match(/{[^}]+}/g);
+
       if (argsInEndpoint) {
         l = argsInEndpoint.length;
 
@@ -86,27 +102,30 @@ Paystack.prototype = {
           // Confirm resource declaration good
           if (!Array.isArray(params.args)) {
             // error
-            throw new Error('Resource declaration error');
+            throw new Error('Resource declaration error 1');
           }
 
           // Confirm user passed the argument to method
           // and replace in endpoint
 
           var match, index;
-          for (var i=0;i<l;i++) {
+
+          for (var i=0; i<l; i++) {
             match = argsInEndpoint[i].replace(/\W/g, '');
+
             index = params.args.indexOf(match);
+
             if (index != -1) {
               if (!args[index]) {
-                // error
-                throw new Error('Resource declaration error');
+                throw new Error('Resource declaration error 2 for index ' + index);
               }
 
               // todo: args[index] must be string or int
               endpoint = endpoint.replace(new RegExp(argsInEndpoint[i]), args[index]);
-              args.splice(index, 1);
+              //args.splice(index, 1);
             }
           }
+          args.splice(0, 1);
         }
       }
 
@@ -144,7 +163,7 @@ Paystack.prototype = {
             reject(error);
           }
           else if(!body.status){
-          
+
             // Error from API??
             error = body;
             body = null;

@@ -26,6 +26,50 @@ describe("Paystack Transaction", function() {
       });
   });
 
+  it("should transfer from a tokenized card", function(done) {
+    paystack.charge.tokenize({
+      email: 'somunizua@gmail.com',
+      card: {
+        number: '4084084084084081',
+        cvv: '408',
+        expiry_month: '03',
+        expiry_year: '19'
+      }
+    })
+    .then(function(body){
+      expect(body).to.have.property('data');
+      expect(body.data).to.have.property('authorization_code');
+
+      return paystack.charge.process({
+        email: 'somunizua@gmail.com',
+        authorization_code: body.data.authorization_code,
+        pin: '9890',
+        amount: 200
+      })
+    })
+      .then(function(body){
+        expect(body).to.have.property('data');
+        expect(body.data).to.have.property('authorization');
+        expect(body.data.authorization).to.have.property('authorization_code');
+
+        return paystack.transaction.charge({
+          email: 'somunizua@gmail.com',
+          authorization_code: body.data.authorization.authorization_code,
+          amount: 20
+        })
+      })
+      .then(function(body){
+        expect(body).to.have.property('data');
+        expect(body.data).to.have.property('status');
+        expect(body.data.status).to.equal('success');
+        expect(body.data).to.have.property('reference');
+        done();
+      })
+      .catch(function(error){
+        return done(error);
+      });
+  });
+
   // Verify Transaction
   it("should verify a transaction", function(done) {
     paystack.transaction.verify(reference)
