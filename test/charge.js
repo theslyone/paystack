@@ -3,7 +3,7 @@ var paystack = require('../index')(process.env.KEY)
   , expect = require('chai').expect
   ;
 
-describe("Paystack Charge Functions", function() {
+describe.only("Paystack Charge Functions", function() {
 
   it("should tokenize a card", function(done) {
     paystack.charge.tokenize({
@@ -58,7 +58,7 @@ describe("Paystack Charge Functions", function() {
       });
   });
 
-  it("should charge bank account", function(done) {
+  it.only("should charge bank account", function(done) {
     paystack.misc.list_banks()
     .then(banks => {
       return banks.data.filter(b => b.name.toLowerCase().includes('zenith'))
@@ -68,7 +68,7 @@ describe("Paystack Charge Functions", function() {
         email: 'somunizua@gmail.com',
         bank: {
           account_number: '0000000000',
-          code: bank[0].code
+          code: bank[0].code //057
         },
         amount: 200
       })
