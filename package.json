@@ -1,6 +1,6 @@
 {
   "name": "paystack",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Paystack API wrapper",
   "main": "index.js",
   "scripts": {
