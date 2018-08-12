@@ -10,6 +10,12 @@ module.exports = {
     params: ['source*', 'amount*', 'recipient*', 'currency', 'reason']
   },
 
+  processBulk: {
+    method: 'post',
+    endpoint: root + '/bulk',
+    params: ['source*', 'transfers*', 'currency']
+  },
+
   list: {
       method: 'get',
       endpoint: root
